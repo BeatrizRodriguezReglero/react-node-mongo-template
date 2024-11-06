@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const mongoose = require('mongoose');
+const todosRoutes = require('./routes/todos.routes');
+require('dotenv').config();
 
 // Rutas
 
@@ -16,5 +19,18 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Uso de rutas
+app.use('/api/todos', todosRoutes);
 
-app.listen(3000, () => console.log('Servidor en ejecución en el puerto 3000'));
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URL);
+    app.listen(process.env.PORT, () =>
+      console.log(`Servidor en ejecución en el puerto ${process.env.PORT}`)
+    );
+    console.log('Connected to database');
+  } catch (error) {
+    console.log('Connection error');
+  }
+};
+
+startServer();
